@@ -9,6 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { TransactionStatus, TransactionType } from '../entities/transaction.entity';
 
 export enum Order {
   ASC = 'ASC',
@@ -39,10 +40,13 @@ export class PageOptions {
   @IsOptional()
   readonly search?: string;
 
-  @ApiPropertyOptional({
-    description: 'Filtrar por status (true = ativo, false = inativo)',
-  })
-  @IsString()
+  @ApiPropertyOptional({ description: 'Termo de busca para pesquisa' })
+  @IsEnum(TransactionType)
+  @IsOptional()
+  @Transform(({ value }) => (value === '' ? undefined : value))
+  readonly type?: TransactionType;
+
+  @ApiPropertyOptional({ description: 'Filtrar por status' })
   @IsOptional()
   readonly status?: string;
 

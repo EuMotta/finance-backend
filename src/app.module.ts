@@ -19,11 +19,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { GptController } from './gpt/gpt.controller';
 import { GptService } from './gpt/gpt.service';
 import { GptModule } from './gpt/gpt.module';
+import { TransactionModule } from './task/transaction.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRootAsync({
+   /*  MongooseModule.forRootAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -32,8 +33,9 @@ import { GptModule } from './gpt/gpt.module';
           process.env.MONGO_URI || '',
         ),
       }),
-    }),
+    }), */
     UsersModule,
+    TransactionModule,
     AuthModule,
     DbModule,
 

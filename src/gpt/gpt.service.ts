@@ -99,8 +99,6 @@ export class GptService {
           'gpt.description',
           'gpt.goal',
           'gpt.temperature',
-          'gpt.capabilities',
-          'gpt.limitations',
           'gpt.created_at',
         ])
         .limit(limit)

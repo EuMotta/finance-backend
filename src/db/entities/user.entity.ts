@@ -10,8 +10,9 @@ import {
 import { BaseEntity } from './base.entity';
 import { AddressEntity } from './address.entity';
 import { GptEntity } from './gpt.entity';
+import { TransactionEntity } from './transaction.entity';
 
-@Entity({ name: 'user' })
+@Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -63,9 +64,9 @@ export class UserEntity extends BaseEntity {
   )
   password: string;
 
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
+  transactions: TransactionEntity[];
+
   @OneToMany(() => AddressEntity, (address) => address.user, { cascade: true })
   address: AddressEntity[];
-
-  @OneToMany(() => GptEntity, (gpt) => gpt.user, { cascade: true })
-  gpts: GptEntity[];
 }

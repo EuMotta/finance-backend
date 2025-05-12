@@ -5,6 +5,7 @@ import { UserEntity } from './entities/user.entity';
 import { EmailVerifyEntity } from './entities/email_verify';
 import { AuditLog } from './entities/audit.entity';
 import { AddressEntity } from './entities/address.entity';
+import { TransactionEntity } from './entities/transaction.entity';
 
 config();
 
@@ -22,6 +23,7 @@ const dataSourceOptions: DataSourceOptions = {
     EmailVerifyEntity,
     AuditLog,
     AddressEntity,
+    TransactionEntity,
   ],
   migrations: [__dirname + '/migrations/*.ts'],
 };

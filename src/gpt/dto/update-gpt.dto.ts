@@ -17,12 +17,6 @@ import {
 import { Timestamps } from 'src/utils/timestamps.dto';
 
 export class UpdateGptDto extends Timestamps {
-  @ApiPropertyOptional({
-    description: 'ID do usuário proprietário do GPT',
-    example: '60c72b2f5f1b2c001cfb6e77',
-  })
-  @IsOptional()
-  user?: string;
 
   @ApiPropertyOptional({
     description: 'Nome do GPT (máx. 100 caracteres)',
@@ -90,35 +84,4 @@ export class UpdateGptDto extends Timestamps {
   @Min(0)
   @Max(1)
   temperature?: number;
-
-  @ApiPropertyOptional({
-    description: 'Capacidades do GPT (entre 1 e 10 itens)',
-    example: ['Responder emails', 'Criar postagens para redes sociais'],
-    type: [String],
-  })
-  @IsOptional()
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(10)
-  @IsString({ each: true })
-  capabilities?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Limitações do GPT (entre 1 e 10 itens)',
-    example: ['Não compreende sarcasmo', 'Não acessa mídias sociais'],
-    type: [String],
-  })
-  @IsOptional()
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(10)
-  @IsString({ each: true })
-  limitations?: string[];
-
-  @IsBoolean()
-  @ApiPropertyOptional({
-    description: 'Indicador se o gpt é publico',
-    example: true,
-  })
-  is_public?: boolean;
 }

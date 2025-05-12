@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -9,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthResponseDto } from './auth.dto';
 import { compareSync as bcryptCompareSync } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { isEmail } from 'class-validator';
 
 /**
  * @service AuthService
@@ -56,6 +58,10 @@ export class AuthService {
 
   async signIn(email: string, password: string): Promise<AuthResponseDto> {
     try {
+      if (!isEmail(email)) {
+        throw new BadRequestException('Formato de e-mail inválido');
+      }
+
       const findUser = await this.usersService.findByUserEmailAuth(email);
 
       if (!findUser) {
@@ -109,7 +115,8 @@ export class AuthService {
 
       if (
         error instanceof NotFoundException ||
-        error instanceof UnauthorizedException
+        error instanceof UnauthorizedException ||
+        error instanceof BadRequestException
       ) {
         throw error;
       }

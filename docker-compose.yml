@@ -1,10 +1,10 @@
 services:
   postgres:
     image: postgres:latest
-    container_name: gpt-db
+    container_name: finance-db
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: gpt-db
+      POSTGRES_DB: finance-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345678

@@ -68,40 +68,4 @@ export class CreateGptDto {
   @Min(0)
   @Max(1)
   temperature: number;
-
-  @ApiProperty({
-    description: 'Capacidades do GPT (entre 1 e 10 itens)',
-    example: ['Responder dúvidas', 'Gerar textos'],
-    minItems: 1,
-    maxItems: 10,
-    type: [String],
-  })
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(10)
-  @IsString({ each: true })
-  capabilities: string[];
-
-  @ApiProperty({
-    description: 'Limitações do GPT (entre 1 e 10 itens)',
-    example: [
-      'Não acessa dados em tempo real',
-      'Não faz previsões financeiras',
-    ],
-    minItems: 1,
-    maxItems: 10,
-    type: [String],
-  })
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(10)
-  @IsString({ each: true })
-  limitations: string[];
-
-  @IsBoolean()
-  @ApiProperty({
-    description: 'Indicador se o gpt é publico',
-    example: true,
-  })
-  is_public?: boolean;
 }

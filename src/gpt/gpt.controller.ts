@@ -21,11 +21,9 @@ import {
 } from '@nestjs/swagger';
 import { GptService } from './gpt.service';
 import { CreateGptDto } from './dto/create-gpt.dto';
-import { UpdateGptDto } from './dto/update-gpt.dto';
 import { ApiResponseSuccess } from 'src/utils/db-response.dto';
 import { AxiosErrorResponse } from 'src/utils/error.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { AdminOnly } from 'src/guards/role.guard';
 import { ApiResponseData } from 'src/interfaces/api';
 import { GptResponseDto } from './dto/gpt.dto';
 import { Page } from 'src/db/pagination/page.dto';
