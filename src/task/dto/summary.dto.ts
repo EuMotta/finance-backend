@@ -1,7 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { TransactionDto, TransactionSummaryItem } from './transaction.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { TransactionCategory } from 'src/db/entities/transaction.entity';
 
 /**
  * @class SummaryOptions
@@ -17,7 +25,7 @@ export class SummaryOptions {
   @Type(() => Date)
   @IsOptional()
   @IsDate()
-  readonly startMonth?: Date;
+  readonly start_month?: Date;
 
   @ApiPropertyOptional({
     description: 'Data de fim do intervalo (ex: 2025-05-01)',
@@ -27,7 +35,7 @@ export class SummaryOptions {
   @Type(() => Date)
   @IsOptional()
   @IsDate()
-  readonly endMonth?: Date;
+  readonly end_month?: Date;
 }
 
 /**
@@ -49,7 +57,7 @@ export class BalanceDetailsDto {
     type: Number,
   })
   @IsNumber()
-  readonly changePercent?: number;
+  readonly change_percent?: number;
 }
 
 /**
@@ -67,7 +75,7 @@ export class RangeDataDto {
   @Type(() => Date)
   @IsOptional()
   @IsDate()
-  startMonth?: Date;
+  start_month?: Date;
 
   @ApiPropertyOptional({
     description: 'Data de fim do intervalo (ex: 2025-05-01)',
@@ -77,7 +85,7 @@ export class RangeDataDto {
   @Type(() => Date)
   @IsOptional()
   @IsDate()
-  endMonth?: Date;
+  end_month?: Date;
 
   @ApiProperty({
     description: 'Lista de transações do intervalo',
@@ -85,10 +93,23 @@ export class RangeDataDto {
   })
   transactions: TransactionDto[];
 }
+export class RangeByCategoryDto {
+  @ApiProperty({ description: 'Categoria da tarefa', example: 'Financeiro' })
+  @IsString()
+  @IsNotEmpty()
+  category: TransactionCategory;
+
+  @ApiProperty({
+    description: 'Valor monetário relacionado à tarefa',
+    example: 120.5,
+  })
+  @IsNumber()
+  amount: number;
+}
 
 export class summaryDto {
   @ApiProperty({ type: TransactionSummaryItem })
-  totalBalance: BalanceDetailsDto;
+  total_balance: BalanceDetailsDto;
 
   @ApiProperty({
     description: 'Detalhes da receita',
@@ -112,5 +133,12 @@ export class summaryDto {
     description: 'Dados do intervalo de tempo',
     type: RangeDataDto,
   })
-  rangeData: RangeDataDto;
+  range_data: RangeDataDto;
+
+  @IsArray()
+  @ApiProperty({
+    description: 'Dados do intervalo de tempo',
+    type: [RangeByCategoryDto],
+  })
+  range_by_category: RangeByCategoryDto[];
 }

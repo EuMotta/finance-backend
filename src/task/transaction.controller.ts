@@ -102,6 +102,30 @@ export class TransactionController {
     return this.transactionService.getSummary(user, query);
   }
 
+    /**
+   * Lista todas as transaçãos com suporte a paginação e filtros.
+   *
+   * @summary Listar transações pendentes
+   * @param {FindAllParameters} Params - Parâmetros de busca e paginação.
+   * @returns {Promise<TransactionDto[]>} Lista de transaçãos.
+   */
+    @Get('upcoming')
+    @ApiOperation({
+      summary: 'Listar todas as transaçãos pendentes',
+      operationId: 'getAllUpcomingTransactions',
+    })
+    @ApiResponse({
+      status: HttpStatus.OK,
+      description: 'Lista de transaçãos retornada com sucesso',
+      type: ApiResponseTransactionList,
+    })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, type: AxiosErrorResponse })
+    getUpcoming(
+      @Query() query: PageOptions,
+    ): Promise<ApiResponseData<Page<TransactionDto>>> {
+      return this.transactionService.getUpcoming(query);
+    }
+  
   /**
    * Retorna os detalhes de uma transação específica pelo ID.
    *

@@ -162,6 +162,86 @@ export class TransactionService {
     }
   }
 
+  async getUpcoming(
+    pageOptions: PageOptions,
+  ): Promise<ApiResponseData<Page<TransactionDto>>> {
+    try {
+      const { page, limit, search, status, order, orderBy, type } = pageOptions;
+      const offset = (page - 1) * limit;
+      
+      const queryBuilder = this.transactionRepository
+        .createQueryBuilder('transaction')
+        .select([
+          'transaction.id',
+          'transaction.title',
+          'transaction.subtitle',
+          'transaction.category',
+          'transaction.date',
+          'transaction.amount',
+          'transaction.status',
+          'transaction.type',
+          'transaction.created_at',
+        ])
+        .limit(limit)
+        .offset(offset);
+        queryBuilder.andWhere('transaction.date > NOW()');
+
+      if (search) {
+        queryBuilder.andWhere(
+          '(transaction.title ILIKE :search OR transaction.subtitle ILIKE :search OR CAST(transaction.amount AS TEXT) ILIKE :search)',
+          { search: `%${search}%` },
+        );
+      }
+
+      if (
+        type &&
+        Object.values(TransactionType).includes(type as TransactionType)
+      ) {
+        queryBuilder.andWhere('transaction.type = :type', { type });
+      }
+
+      if (
+        status &&
+        Object.values(TransactionStatus).includes(status as TransactionStatus)
+      ) {
+        queryBuilder.andWhere('transaction.status = :status', { status });
+      }
+      if (orderBy) {
+        const validColumns = [
+          'title',
+          'subtitle',
+          'amount',
+          'type',
+          'category',
+          'date',
+          'created_at',
+        ];
+        if (!validColumns.includes(orderBy)) {
+          throw new BadRequestException(
+            `Campo de ordenação inválido: ${orderBy}`,
+          );
+        }
+        queryBuilder.orderBy(`transaction.${orderBy}`, order || 'ASC');
+      } else {
+        queryBuilder.orderBy('transaction.created_at', order || 'ASC');
+      }
+
+      const itemCount = await queryBuilder.getCount();
+      const data = await queryBuilder.getMany();
+
+      const pageMetaDto = new PageMeta({ itemCount, pageOptions });
+      const pageDto = new Page(data, pageMetaDto);
+
+      return {
+        error: false,
+        message: 'Transações pendentes encontrados com sucesso!',
+        data: pageDto,
+      };
+    } catch (error) {
+      console.error('Erro ao buscar Transações:', error);
+      throw new InternalServerErrorException('Erro ao buscar Transações');
+    }
+  }
   async getSummary(user: TokenPayload, query: SummaryOptions): Promise<any> {
     try {
       const now = new Date();
@@ -171,8 +251,8 @@ export class TransactionService {
       const defaultStart = new Date(currentYear, currentMonth - 1, 1);
       const defaultEnd = new Date(currentYear, currentMonth + 1, 0);
 
-      const startDate = query.startMonth ?? defaultStart;
-      const endDate = query.endMonth ?? defaultEnd;
+      const startDate = query.start_month ?? defaultStart;
+      const endDate = query.end_month ?? defaultEnd;
 
       const lastYearStartDate = new Date(
         startDate.getFullYear() - 1,
@@ -231,19 +311,6 @@ export class TransactionService {
         (t) => t.category === 'INVESTMENTS',
       );
 
-      const groupTransactionsByCategory = (transactions) => {
-        const grouped = {};
-
-        for (const tx of transactions) {
-          if (!grouped[tx.category]) {
-            grouped[tx.category] = [];
-          }
-          grouped[tx.category].push(tx);
-        }
-
-        return grouped;
-      };
-
       const rangeByCategory = currentTransactions.reduce((acc, tx) => {
         const category = tx.category;
         const amount = Number(tx.amount);
@@ -270,28 +337,28 @@ export class TransactionService {
         error: false,
         message: 'Resumo financeiro gerado com sucesso',
         data: {
-          totalBalance: {
+          total_balance: {
             value: currentBalance,
-            changePercent: percentChange(currentBalance, lastBalance),
+            change_percent: percentChange(currentBalance, lastBalance),
           },
           income: {
             value: currentIncome,
-            changePercent: percentChange(currentIncome, lastIncome),
+            change_percent: percentChange(currentIncome, lastIncome),
           },
           expenses: {
             value: currentExpenses,
-            changePercent: percentChange(currentExpenses, lastExpenses),
+            change_percent: percentChange(currentExpenses, lastExpenses),
           },
           investments: {
             value: currentInvestments,
-            changePercent: percentChange(currentInvestments, lastInvestments),
+            change_percent: percentChange(currentInvestments, lastInvestments),
           },
-          rangeData: {
-            startMonth: query.startMonth ?? defaultStart,
-            endMonth: query.endMonth ?? defaultEnd,
+          range_data: {
+            start_month: query.start_month ?? defaultStart,
+            end_month: query.end_month ?? defaultEnd,
             transactions: currentTransactions,
           },
-          rangeByCategory: rangeByCategoryResult,
+          range_by_category: rangeByCategoryResult,
         },
       };
     } catch (error) {

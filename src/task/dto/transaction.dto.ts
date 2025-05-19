@@ -43,15 +43,13 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   category: TransactionCategory;
 
-  @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'Data da transação em formato ISO 8601',
     example: '2025-05-08T09:00:00Z',
-    required: false,
   })
   @IsISO8601()
-  date?: Date;
+  date: Date;
 
   @ApiProperty({
     description: 'Valor monetário relacionado à tarefa',
@@ -109,7 +107,7 @@ export class TransactionDto {
     required: false,
   })
   @IsISO8601()
-  date?: Date;
+  date: Date;
 
   @ApiProperty({
     description: 'Valor monetário relacionado à tarefa',
@@ -132,12 +130,12 @@ export class TransactionSummaryItem {
   value: number;
 
   @ApiProperty({ example: 8.4 })
-  changePercent: number;
+  change_percent: number;
 }
 
 export class TransactionSummaryResponse {
   @ApiProperty({ type: TransactionSummaryItem })
-  totalBalance: TransactionSummaryItem;
+  total_balance: TransactionSummaryItem;
 
   @ApiProperty({ type: TransactionSummaryItem })
   income: TransactionSummaryItem;

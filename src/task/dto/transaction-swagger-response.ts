@@ -38,7 +38,7 @@ export class ApiResponseTransactionList {
   message: string;
 
   @ApiProperty({ type: TransactionPage })
-  data?: TransactionPage;
+  data: TransactionPage;
 }
 
 /**
@@ -55,7 +55,7 @@ export class ApiResponseTransaction {
   message: string;
 
   @ApiProperty({ type: TransactionResponseDto })
-  data?: TransactionResponseDto;
+  data: TransactionResponseDto;
 }
 
 /**
@@ -72,5 +72,5 @@ export class ApiResponseSummaryTransaction {
   message: string;
 
   @ApiProperty({ type: summaryDto})
-  data?: summaryDto;
+  data: summaryDto;
 }
